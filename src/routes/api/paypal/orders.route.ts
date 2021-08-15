@@ -3,6 +3,7 @@ import { PathParams } from 'express-serve-static-core';
 import got, {Response as GotResponse} from 'got';
 import { paypalEnv } from '../../../exports/config.exports';
 import { RouterType } from '../../../exports/router.exports';
+import * as secret from '../../../secret/secret.json';
 
 class OrdersRoute extends RouterType {
     constructor(path: PathParams) {
@@ -10,13 +11,14 @@ class OrdersRoute extends RouterType {
 
         this.handle.get('/ping', (req: Request, res: Response) => {
             res.status(200).json({response: 'pong'});
+            console.log(secret);
         });
 
         this.handle.post('/', (req: Request, res: Response) => {
             got.post(`${paypalEnv.v2}/checkout/orders`, {
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${req.body.accessToken}`
+                    'Authorization': `Bearer ${secret['Access Token'].Token}`
                 },
                 method: 'POST',
                 responseType: 'json',
@@ -48,7 +50,7 @@ class OrdersRoute extends RouterType {
             got.post(url, {
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${req.body.accessToken}`,
+                    'Authorization': `Bearer ${secret['Access Token'].Token}`,
                 },
                 method: 'POST',
                 responseType: 'json',
