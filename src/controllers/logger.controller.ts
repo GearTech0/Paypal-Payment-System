@@ -1,5 +1,9 @@
 import winston from 'winston';
 
+const logFormat = winston.format.printf(({level, message, file, app, timestamp}) => {
+    return `${timestamp} [${level}] ${app} <${file}> ${message}`;
+});
+
 class LoggerController {
     private logger: winston.Logger;
     
@@ -17,17 +21,17 @@ class LoggerController {
 }
 
 const Logger = new LoggerController({
+    level:(process.env.NODE_ENV == 'production') ? 'info' : 'debug',
     defaultMeta: {
         app: 'EBPI API Application'
     },
     transports: [
         new winston.transports.Console(),
-        new winston.transports.File({ filename: '../logs/debug.log' })
+        new winston.transports.File({ filename: `debug.log` })
     ],
     format: winston.format.combine(
         winston.format.timestamp(),
-        winston.format.json(),
-        winston.format.prettyPrint()
+        logFormat
     )
 });
 console.log('Logger created');

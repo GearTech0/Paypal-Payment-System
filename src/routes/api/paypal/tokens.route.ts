@@ -5,8 +5,10 @@ import got from 'got/dist/source';
 import { RouterType } from '../../../exports/router.exports';
 import { paypalEnv } from '../../../exports/config.exports';
 import * as secret from '../../../secret/secret.json';
+import Logger from '../../../controllers/logger.controller';
 
 const env = (process.env.NODE_ENV?.toLowerCase() == 'production') ? 'Live' : 'Sandbox';
+const rootLogger = Logger.createChild({file: 'index.ts'});
 
 class TokensRoute extends RouterType {
     constructor(path: PathParams) {
@@ -36,7 +38,7 @@ class TokensRoute extends RouterType {
 
                     fs.writeFile(`${__dirname}/../../../secret.json`, JSON.stringify(secret), (err) => {
                         if (err) {
-                            console.error(err);
+                            rootLogger.error(err);
                             res.status(400).json({err});
                             return;
                         }
@@ -46,7 +48,7 @@ class TokensRoute extends RouterType {
                 }
             }).catch((reason: any) => {
                 res.status(400).json({error: reason});
-                console.error(reason);
+                rootLogger.error(reason);
             });
         });
 
@@ -64,7 +66,7 @@ class TokensRoute extends RouterType {
                 res.status(200).json({response: response});
             }).catch((reason: any) => {
                 res.status(400).json({error: reason});
-                console.error(reason);
+                rootLogger.error(reason);
             });
         });
     }

@@ -2,3 +2,5 @@ node_modules/
 secret/
 dist/
 logs/
+pm2start.js
+debug.log

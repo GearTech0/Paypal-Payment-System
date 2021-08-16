@@ -3,7 +3,7 @@ import cors from 'cors';
 import Logger from './logger.controller';
 import Bus from '../routes/bus.router';
 
-const logger = Logger.createChild({file: 'express.controller.ts'});
+const rootLogger = Logger.createChild({file: 'express.controller.ts'});
 
 export default class ExpressController {
 
@@ -27,7 +27,7 @@ export default class ExpressController {
 
     private startServer(): void {
         this.app.listen(this.port, () => {
-            logger.info({message: `Application is listening on port: ${this.port}`});
+            rootLogger.info(`Application is listening on port: ${this.port}`);
         });
     }
 }
