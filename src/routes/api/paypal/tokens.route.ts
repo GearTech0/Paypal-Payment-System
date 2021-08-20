@@ -8,7 +8,7 @@ import * as secret from '../../../secret/secret.json';
 import Logger from '../../../controllers/logger.controller';
 
 const env = (process.env.NODE_ENV?.toLowerCase() == 'production') ? 'Live' : 'Sandbox';
-const rootLogger = Logger.createChild({file: 'index.ts'});
+const rootLogger = Logger.createChild({file: 'tokens.route.ts'});
 
 class TokensRoute extends RouterType {
     constructor(path: PathParams) {
@@ -31,20 +31,28 @@ class TokensRoute extends RouterType {
                 resolveBodyOnly: true,
             }).then((response: any) => {
                 // Save access token
-                if (response) {
+                if (response &&
+                    (!secret['Access Token'].Token ||
+                    secret['Access Token'].Token &&
+                    secret['Access Token']['Created On'] + secret['Access Token']['Expires In'] < Date.now())
+                ) {
                     secret['Access Token'].Token = response.access_token;
                     secret['Access Token']['Expires In'] = response.expires_in;
+                    secret['Access Token']['Created On'] = Date.now();
                     secret['Access Token'].nonce = response.nonce;
 
-                    fs.writeFile(`${__dirname}/../../../secret.json`, JSON.stringify(secret), (err) => {
+                    fs.writeFile(`${__dirname}/../../../secret/secret.json`, JSON.stringify(secret), (err) => {
                         if (err) {
                             rootLogger.error(err);
                             res.status(400).json({err});
                             return;
                         }
 
+                        rootLogger.info(`Access token has been created by requester`);
                         res.status(200).json({message: 'Access Token Saved', status: 'COMPLETE'});
                     });
+                } else {
+                    res.status(200).json({message: 'Access token already exists', status: 'COMPLETE'});
                 }
             }).catch((reason: any) => {
                 res.status(400).json({error: reason});

@@ -6,7 +6,7 @@ import { paypalEnv } from '../../../exports/config.exports';
 import { RouterType } from '../../../exports/router.exports';
 import * as secret from '../../../secret/secret.json';
 
-const rootLogger = Logger.createChild({file: 'index.ts'});
+const rootLogger = Logger.createChild({file: 'orders.route.ts'});
 
 class OrdersRoute extends RouterType {
     constructor(path: PathParams) {
@@ -38,9 +38,9 @@ class OrdersRoute extends RouterType {
                 },
                 resolveBodyOnly: true
             }).then((response) => {
-                rootLogger.debug(req.body);
-                rootLogger.debug(response);
-                res.status(200).json({response});
+                rootLogger.debug(`${response}`);
+                let r: any = response;
+                res.status(200).json({id: r.id, status: r.status, link: r.links[1]});
             }).catch((reason: any) => {
                 rootLogger.error(reason);
                 res.status(400).json({status: 'ERROR', error: reason});
