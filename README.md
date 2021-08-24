@@ -26,7 +26,7 @@ Responds with 'pong' for testing purposes.
 
 Creates an order and returns a fullfillment link to finalize the purchase.
 
-## /api/paypal/orders/authorize
+## /api/paypal/orders/capture
 **Body**
 - orderId: The ID value recieved from the `/paypal/orders` route.
 

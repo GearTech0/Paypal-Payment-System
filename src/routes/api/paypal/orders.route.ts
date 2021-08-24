@@ -1,9 +1,11 @@
 import { Request, Response } from 'express';
 import { PathParams } from 'express-serve-static-core';
 import got, {Response as GotResponse} from 'got';
+import ApplicationInfo from '../../../controllers/application-info.controller';
 import Logger from '../../../controllers/logger.controller';
 import { paypalEnv } from '../../../exports/config.exports';
 import { RouterType } from '../../../exports/router.exports';
+import PaypalModule from '../../../modules/paypal/paypal.module';
 import * as secret from '../../../secret/secret.json';
 
 const rootLogger = Logger.createChild({file: 'orders.route.ts'});
@@ -11,6 +13,9 @@ const rootLogger = Logger.createChild({file: 'orders.route.ts'});
 class OrdersRoute extends RouterType {
     constructor(path: PathParams) {
         super(path);
+        
+        let app = new ApplicationInfo();
+        let paypal = new PaypalModule();
 
         this.handle.get('/ping', (req: Request, res: Response) => {
             res.status(200).json({response: 'pong'});
@@ -18,53 +23,38 @@ class OrdersRoute extends RouterType {
         });
 
         this.handle.post('/', (req: Request, res: Response) => {
-            got.post(`${paypalEnv.v2}/checkout/orders`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${secret['Access Token'].Token}`
-                },
-                method: 'POST',
-                responseType: 'json',
-                json: {
-                    "intent": "CAPTURE",
-                    "purchase_units": [
-                        {
-                            "amount": {
-                                "currency_code": req.body.countryCode || "USD",
-                                "value": req.body.purchaseUnits
-                            }
-                        }
-                    ]
-                },
-                resolveBodyOnly: true
-            }).then((response) => {
-                rootLogger.debug(`${response}`);
-                let r: any = response;
-                res.status(200).json({id: r.id, status: r.status, link: r.links[1]});
-            }).catch((reason: any) => {
-                rootLogger.error(reason);
-                res.status(400).json({status: 'ERROR', error: reason});
-            });
+            app.refreshAppInfo();
+            paypal
+                .createOrder(
+                    app.info['Access Token'].Token, 
+                    req.body.countryCode || 'USD', 
+                    req.body.purchaseUnits)
+                .subscribe({
+                    next: (response: any) => {
+                        res.status(200).json({
+                            id: response.id, 
+                            status: response.status, 
+                            link: response.links[1]
+                        });
+                    },
+                    error: (error: any) => {
+                        res.status(400).json({status: 'ERROR', error});
+                    }
+                })
         });
 
-        this.handle.post('/authorize', (req: Request, res: Response) => {
-            const url = `${paypalEnv.v2}/checkout/orders/${req.body.orderId}/capture`;
-            console.log(url);
-            got.post(url, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${secret['Access Token'].Token}`,
-                },
-                method: 'POST',
-                responseType: 'json',
-                resolveBodyOnly: true
-            }).then((response) => {
-                rootLogger.debug(response);
-                res.status(200).json({response});
-            }).catch((reason: any) => {
-                rootLogger.error(reason);
-                res.status(400).json({error: reason});
-            });
+        this.handle.post('/capture', (req: Request, res: Response) => {
+            app.refreshAppInfo();
+            paypal
+                .captureOrder(app.info['Access Token']['Token'], req.body.orderId)
+                .subscribe({
+                    next: (response: any) => {
+                        res.status(200).json({response});
+                    },
+                    error: (error: any) => {
+                        res.status(400).json({status: 'ERROR', error});
+                    }
+                })
         });
     }
 }
