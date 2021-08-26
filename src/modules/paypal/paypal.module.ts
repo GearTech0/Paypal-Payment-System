@@ -1,9 +1,6 @@
 import got from 'got/dist/source';
 import { Observable, Observer } from 'rxjs';
-import ApplicationInfo from '../../controllers/application-info.controller';
 import { paypalEnv } from '../../exports/config.exports';
-
-const env = (process.env.NODE_ENV?.toLowerCase() == 'production') ? 'Live' : 'Sandbox';
 
 export default class PaypalModule {
 
@@ -31,8 +28,13 @@ export default class PaypalModule {
         })
     }
 
-    createOrder(accessToken: string, countryCode: string, purchaseUnits: string): Observable<any> {
-        console.log(accessToken, countryCode, purchaseUnits);
+    createOrder(
+        accessToken: string, 
+        countryCode: string, 
+        purchaseUnits: string,
+        payee_email: string
+    ): Observable<any> {
+        console.log(accessToken, countryCode, purchaseUnits, payee_email);
         return new Observable((obs: Observer<any>) => {
             got.post(`${paypalEnv.v2}/checkout/orders`, {
                 headers: {
@@ -48,6 +50,9 @@ export default class PaypalModule {
                             "amount": {
                                 "currency_code": countryCode,
                                 "value": purchaseUnits
+                            },
+                            "payee": {
+                                "email_address": payee_email
                             }
                         }
                     ]

@@ -12,3 +12,4 @@ export const cfg = {
 }
 
 export const paypalEnv = (process.env.NODE_ENV == 'production') ? cfg.PaypalURL.live : cfg.PaypalURL.dev;
+export const ENV = (process.env.NODE_ENV?.toLowerCase() == 'production') ? 'Live' : 'Sandbox';

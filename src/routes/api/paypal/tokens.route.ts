@@ -21,7 +21,7 @@ class TokensRoute extends RouterType {
             let paypal = new PaypalModule();
             if (app.checkAccessToken()) {
                 paypal
-                    .createAuthToken(app.info[env]['Client ID'], app.info[env]['Secret'])
+                    .createAuthToken(app.info[env].client_id, app.info[env].secret)
                     .subscribe({
                         next: (response: any) => {
                             app.updateAccessToken(
@@ -29,7 +29,7 @@ class TokensRoute extends RouterType {
                                 response.expires_in,
                                 response.nonce
                             );
-                            console.log('new access token: ', app.info['Access Token']);
+                            console.log('new access token: ', app.info.accessToken);
                             res.status(200).json({message: 'Access Token Saved', status: 'COMPLETE'});
                         },
                         error: (error: any) => {

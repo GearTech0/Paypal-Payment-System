@@ -3,7 +3,7 @@ import { PathParams } from 'express-serve-static-core';
 import got, {Response as GotResponse} from 'got';
 import ApplicationInfo from '../../../controllers/application-info.controller';
 import Logger from '../../../controllers/logger.controller';
-import { paypalEnv } from '../../../exports/config.exports';
+import { ENV, paypalEnv } from '../../../exports/config.exports';
 import { RouterType } from '../../../exports/router.exports';
 import PaypalModule from '../../../modules/paypal/paypal.module';
 import * as secret from '../../../secret/secret.json';
@@ -26,9 +26,10 @@ class OrdersRoute extends RouterType {
             app.refreshAppInfo();
             paypal
                 .createOrder(
-                    app.info['Access Token'].Token, 
+                    app.info.accessToken.token, 
                     req.body.countryCode || 'USD', 
-                    req.body.purchaseUnits)
+                    req.body.purchaseUnits,
+                    app.info.accounts.Sandbox["0004"].email)
                 .subscribe({
                     next: (response: any) => {
                         res.status(200).json({
@@ -46,7 +47,7 @@ class OrdersRoute extends RouterType {
         this.handle.post('/capture', (req: Request, res: Response) => {
             app.refreshAppInfo();
             paypal
-                .captureOrder(app.info['Access Token']['Token'], req.body.orderId)
+                .captureOrder(app.info.accessToken.token, req.body.orderId)
                 .subscribe({
                     next: (response: any) => {
                         res.status(200).json({response});

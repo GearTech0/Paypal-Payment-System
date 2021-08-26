@@ -24,10 +24,10 @@ export default class ApplicationInfo {
     }
 
     updateAccessToken(token: any, expiry: any, nonce: any): void {
-        this.info['Access Token'].Token = token;
-        this.info['Access Token']['Expires In'] = expiry;
-        this.info['Access Token']['Created On'] = Date.now();
-        this.info['Access Token'].nonce = nonce;
+        this.info.accessToken.token = token;
+        this.info.accessToken.expires_in = expiry;
+        this.info.accessToken.created_on = Date.now();
+        this.info.accessToken.nonce = nonce;
 
         this.infoModified = true;
         this.refreshAppInfo();
@@ -35,8 +35,8 @@ export default class ApplicationInfo {
 
     checkAccessToken(): boolean {
         return this.info && 
-            (!this.info['Access Token'].Token ||
-            this.info['Access Token'].Token &&
-            this.info['Access Token']['Created On'] + this.info['Access Token']['Expires In'] < Date.now());
+            (!this.info.accessToken.token ||
+            this.info.accessToken.token &&
+            this.info.accessToken.created_on + this.info.accessToken.expires_in < Date.now());
     }
 }
