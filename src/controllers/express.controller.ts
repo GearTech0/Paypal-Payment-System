@@ -1,5 +1,6 @@
 import express, { json, urlencoded } from 'express';
 import cors from 'cors';
+
 import Logger from './logger.controller';
 import Bus from '../routes/bus.router';
 

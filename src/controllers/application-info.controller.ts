@@ -1,4 +1,5 @@
 import fs from 'fs';
+
 import Logger from './logger.controller';
 
 const logIndex = Logger.createChild({file: 'application-info.controller.ts'});
