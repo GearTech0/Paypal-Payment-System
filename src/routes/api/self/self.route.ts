@@ -8,7 +8,7 @@ import * as secret from '../../../secret/secret.json';
 import Logger from '../../../controllers/logger.controller';
 
 const env = (process.env.NODE_ENV?.toLowerCase() == 'production') ? 'Live' : 'Sandbox';
-const rootLogger = Logger.createChild({file: 'self.route.ts'});
+const logIndex = Logger.createChild({file: 'self.route.ts'});
 
 class TokensRoute extends RouterType {
     constructor(path: PathParams) {

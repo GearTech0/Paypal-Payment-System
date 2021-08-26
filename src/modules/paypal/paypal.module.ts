@@ -1,6 +1,9 @@
 import got from 'got/dist/source';
 import { Observable, Observer } from 'rxjs';
+import Logger from '../../controllers/logger.controller';
 import { paypalEnv } from '../../exports/config.exports';
+
+const logIndex = Logger.createChild({file: 'paypal.module.ts'});
 
 export default class PaypalModule {
 
@@ -34,7 +37,7 @@ export default class PaypalModule {
         purchaseUnits: string,
         payee_email: string
     ): Observable<any> {
-        console.log(accessToken, countryCode, purchaseUnits, payee_email);
+        Logger.children[logIndex].debug(accessToken, countryCode, purchaseUnits, payee_email);
         return new Observable((obs: Observer<any>) => {
             got.post(`${paypalEnv.v2}/checkout/orders`, {
                 headers: {
@@ -70,7 +73,7 @@ export default class PaypalModule {
     captureOrder(accessToken: string, orderId: string): Observable<any> {
         return new Observable((obs: Observer<any>) => {
             const url = `${paypalEnv.v2}/checkout/orders/${orderId}/capture`;
-            console.log(url);
+            Logger.children[logIndex].debug(url);
             got.post(url, {
                 headers: {
                     'Content-Type': 'application/json',

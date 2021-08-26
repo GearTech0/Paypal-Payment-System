@@ -1,6 +1,8 @@
 import fs from 'fs';
 import Logger from './logger.controller';
 
+const logIndex = Logger.createChild({file: 'application-info.controller.ts'});
+
 export default class ApplicationInfo {
     
     info?: any;
@@ -15,11 +17,11 @@ export default class ApplicationInfo {
         if (this.infoModified) {
             fs.writeFileSync(this.appInfoFile, JSON.stringify(this.info), 'utf-8');
             
-            console.log(`Wrote data to: ${this.appInfoFile}`);
+            Logger.children[logIndex].debug(`Wrote data to: ${this.appInfoFile}`);
             this.infoModified = false;
         }
         let data = fs.readFileSync(this.appInfoFile, 'utf-8');
-        console.log(`Read data from: ${this.appInfoFile}`)
+        Logger.children[logIndex].debug(`Read data from: ${this.appInfoFile}`)
         this.info = JSON.parse(data);
     }
 

@@ -1,14 +1,13 @@
 import { Request, Response } from 'express';
 import { PathParams } from 'express-serve-static-core';
-import got, {Response as GotResponse} from 'got';
+
 import ApplicationInfo from '../../../controllers/application-info.controller';
 import Logger from '../../../controllers/logger.controller';
-import { ENV, paypalEnv } from '../../../exports/config.exports';
+import { ENV } from '../../../exports/config.exports';
 import { RouterType } from '../../../exports/router.exports';
 import PaypalModule from '../../../modules/paypal/paypal.module';
-import * as secret from '../../../secret/secret.json';
 
-const rootLogger = Logger.createChild({file: 'orders.route.ts'});
+const logIndex = Logger.createChild({file: 'orders.route.ts'});
 
 class OrdersRoute extends RouterType {
     constructor(path: PathParams) {
@@ -19,7 +18,7 @@ class OrdersRoute extends RouterType {
 
         this.handle.get('/ping', (req: Request, res: Response) => {
             res.status(200).json({response: 'pong'});
-            rootLogger.debug(secret);
+            Logger.children[logIndex].debug(app.info);
         });
 
         this.handle.post('/', (req: Request, res: Response) => {
@@ -29,7 +28,7 @@ class OrdersRoute extends RouterType {
                     app.info.accessToken.token, 
                     req.body.countryCode || 'USD', 
                     req.body.purchaseUnits,
-                    app.info.accounts.Sandbox["0004"].email)
+                    app.info.accounts[ENV]["0004"].email)
                 .subscribe({
                     next: (response: any) => {
                         res.status(200).json({

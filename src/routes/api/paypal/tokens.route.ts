@@ -10,7 +10,7 @@ import ApplicationInfo from '../../../controllers/application-info.controller';
 import PaypalModule from '../../../modules/paypal/paypal.module';
 
 const env = (process.env.NODE_ENV?.toLowerCase() == 'production') ? 'Live' : 'Sandbox';
-const rootLogger = Logger.createChild({file: 'tokens.route.ts'});
+const logIndex = Logger.createChild({file: 'tokens.route.ts'});
 
 class TokensRoute extends RouterType {
     constructor(path: PathParams) {
@@ -29,7 +29,7 @@ class TokensRoute extends RouterType {
                                 response.expires_in,
                                 response.nonce
                             );
-                            console.log('new access token: ', app.info.accessToken);
+                            Logger.children[logIndex].debug('new access token: ', app.info.accessToken);
                             res.status(200).json({message: 'Access Token Saved', status: 'COMPLETE'});
                         },
                         error: (error: any) => {

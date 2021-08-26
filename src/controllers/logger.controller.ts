@@ -6,6 +6,7 @@ const logFormat = winston.format.printf(({level, message, file, app, timestamp})
 
 class LoggerController {
     private logger: winston.Logger;
+    public children: Array<winston.Logger> = [];
     
     constructor(opts: winston.LoggerOptions) {
         this.logger = winston.createLogger(opts);
@@ -15,8 +16,10 @@ class LoggerController {
         return this.logger;
     }
 
-    public createChild(opts: Object): winston.Logger {
-        return this.logger.child(opts);
+    public createChild(opts: Object): number {
+        let index = this.children.length;
+        this.children.push(this.logger.child(opts));
+        return index;
     }
 }
 
@@ -34,5 +37,6 @@ const Logger = new LoggerController({
         logFormat
     )
 });
-console.log('Logger created');
+
+Logger.GetLogger().info('Logger created');
 export default Logger;
