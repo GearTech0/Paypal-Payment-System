@@ -22,7 +22,7 @@ export default class ApplicationInfo {
             this.infoModified = false;
         }
         let data = fs.readFileSync(this.appInfoFile, 'utf-8');
-        Logger.children[logIndex].debug(`Read data from: ${this.appInfoFile}`)
+        Logger.children[logIndex].debug(`Read data from: ${this.appInfoFile}`);
         this.info = JSON.parse(data);
     }
 

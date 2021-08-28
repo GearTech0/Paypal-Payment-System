@@ -52,6 +52,7 @@ class OrdersRoute extends RouterType {
                         res.status(200).json({response});
                     },
                     error: (error: any) => {
+                        Logger.children[logIndex].debug(`Error was discovered: ${error}`);
                         res.status(400).json({status: 'ERROR', error});
                     }
                 })

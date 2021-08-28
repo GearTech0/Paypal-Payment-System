@@ -4,3 +4,6 @@ dist/
 logs/
 pm2start.js
 debug.log
+
+# Personal Unique Local File
+RUN.sh
