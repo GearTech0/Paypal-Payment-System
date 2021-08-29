@@ -1,8 +1,8 @@
 import express from 'express';
 import { PathParams } from "express-serve-static-core";
-import { RouterType } from "../../exports/router.exports";
-import ordersRoute from "./paypal/orders.route";
-import tokensRoute from './paypal/tokens.route';
+import { RouterType } from "../../../exports/router.exports";
+import ordersRoute from "./orders.route";
+import tokensRoute from './tokens.route';
 
 class PayPalRouter extends RouterType {
 

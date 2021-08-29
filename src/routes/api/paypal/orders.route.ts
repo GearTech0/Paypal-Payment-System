@@ -28,7 +28,7 @@ class OrdersRoute extends RouterType {
                     app.info.accessToken.token, 
                     req.body.countryCode || 'USD', 
                     req.body.purchaseUnits,
-                    app.info.accounts[ENV]["0004"].email)
+                    app.info.accounts[ENV]["0004"].email)   // TODO: update key with a fetch of the user auth in req body
                 .subscribe({
                     next: (response: any) => {
                         res.status(200).json({

@@ -1,7 +1,8 @@
 import express, { Router } from 'express';
 import { RouterType } from '../exports/router.exports';
 import { PathParams } from 'express-serve-static-core';
-import paypalRouter from './api/paypal.router';
+import paypalRouter from './api/paypal/paypal.router';
+import accountRoute from './api/accounts/accounts.route';
 
 class BusRouter extends RouterType {
     
@@ -9,6 +10,7 @@ class BusRouter extends RouterType {
         super(path);
 
         paypalRouter.register(this.handle);
+        accountRoute.register(this.handle);
     }
 }
 
